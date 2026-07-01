@@ -15,4 +15,6 @@ Landing de validación para **Fix Posture** — herramienta de bienestar postura
 
 **URL pública actual:** [fixposture-kappa.vercel.app](https://fixposture-kappa.vercel.app)
 
+**Visibilidad del repo:** público (necesario para Vercel Hobby con deploys automáticos).
+
 **Endpoint de waitlist:** Google Apps Script Web App vinculado a la Sheet privada "Fix Posture — Waitlist". Guarda `[timestamp, email, source, lang, confirmed]` y responde con el correo de bienvenida bilingüe (ES/EN).
