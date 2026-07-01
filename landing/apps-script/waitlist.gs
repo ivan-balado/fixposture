@@ -28,6 +28,8 @@
 const SHEET_NAME = 'Waitlist';
 const FROM_NAME  = 'Iván — Fix Posture';
 const REPLY_TO   = 'ivann19bj@gmail.com';
+const ALLOWED_SOURCES = ['landing-v1', 'landing-validation', 'preview', 'manual'];
+const MIN_DWELL_MS = 1000; // Rechazar submits más rápidos que 1 s.
 
 function doPost(e) {
   try {
@@ -35,9 +37,18 @@ function doPost(e) {
       return jsonOut({ ok: false, error: 'no_body' });
     }
     const body = JSON.parse(e.postData.contents);
-    const email  = (body.email  || '').toString().trim().toLowerCase();
-    const source = (body.source || 'landing').toString().slice(0, 60);
-    const lang   = ((body.lang  || 'es').toString().toLowerCase() === 'en') ? 'en' : 'es';
+    const email    = (body.email  || '').toString().trim().toLowerCase();
+    const rawSrc   = (body.source || 'landing-v1').toString();
+    const source   = ALLOWED_SOURCES.indexOf(rawSrc) >= 0 ? rawSrc : 'landing-v1';
+    const lang     = ((body.lang  || 'es').toString().toLowerCase() === 'en') ? 'en' : 'es';
+    const honeypot = (body.hp || '').toString();
+    const dwell    = Number(body.dwell) || 0;
+
+    // Anti-bot server-side: honeypot lleno o dwell demasiado corto → fake success.
+    // Nunca guardamos ni respondemos con error para no dar señal al atacante.
+    if (honeypot.length > 0 || (dwell > 0 && dwell < MIN_DWELL_MS)) {
+      return jsonOut({ ok: true });
+    }
 
     if (!isValidEmail(email)) {
       return jsonOut({ ok: false, error: 'invalid_email' });
@@ -66,8 +77,9 @@ function doPost(e) {
     sheet.getRange(row, 5).setValue(true);
     return jsonOut({ ok: true });
   } catch (err) {
+    // Nunca devolvemos el detalle al cliente: podría filtrar implementación.
     console.error(err);
-    return jsonOut({ ok: false, error: String(err && err.message || err) });
+    return jsonOut({ ok: false, error: 'server_error' });
   }
 }
 

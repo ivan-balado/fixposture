@@ -62,6 +62,13 @@ Sustituye por tu URL real. Guarda. Ya está.
 #### Cuando actualices el `.gs`
 Cada cambio en el Apps Script hay que **desplegarlo de nuevo** con **Deploy → Gestionar implementaciones → editar (✏) → Versión: Nueva versión → Implementar**. La URL de "/exec" se mantiene.
 
+**Importante:** el `waitlist.gs` incluye anti-bot (honeypot + comprobación de dwell time). Si actualizas el archivo local, acuérdate de:
+1. Pegar el nuevo contenido en el editor de Apps Script.
+2. Guardar (Ctrl+S).
+3. **Deploy → Gestionar implementaciones → editar (✏) → Nueva versión → Implementar.**
+
+Sin este paso, el endpoint sigue ejecutando la versión anterior.
+
 #### Cuándo migrar (post-validación)
 - Superas los 100 emails/día de envío (Gmail personal) → **Google Workspace** te da 1.500/día por 6€/mes, o migra a **Resend** (3000/mes gratis) / **Loops** (1000 contactos gratis).
 - Quieres una secuencia drip real → **Loops** es lo más rápido de montar.

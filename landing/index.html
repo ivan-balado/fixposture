@@ -851,6 +851,11 @@
       <p data-i18n="cta.sub">Los primeros 500 emails de la waitlist tendrán un 50% de descuento de por vida cuando lancemos. Cero spam. Te avisamos cuando esté listo y nada más.</p>
 
       <form class="waitlist" id="waitlistForm" novalidate>
+        <!-- Honeypot: campo oculto que los bots rellenan y los humanos no. -->
+        <div aria-hidden="true" style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;">
+          <label for="wf-website">No rellenar</label>
+          <input type="text" id="wf-website" name="website" tabindex="-1" autocomplete="off" />
+        </div>
         <div class="waitlist-form">
           <label class="visually-hidden" for="wf-email" data-i18n="cta.emailLabel">Email</label>
           <input type="email" id="wf-email" name="email" required autocomplete="email"
@@ -1136,6 +1141,7 @@
     const form   = document.getElementById('waitlistForm');
     const okBox  = document.getElementById('formSuccess');
     const errBox = document.getElementById('formError');
+    const pageLoadedAt = Date.now();
 
     function hideMsgs() { okBox.classList.remove('show'); errBox.classList.remove('show'); }
 
@@ -1143,6 +1149,9 @@
       e.preventDefault();
       hideMsgs();
       const email = form.email.value.trim();
+      const honeypot = (form.website && form.website.value || '').trim();
+      const dwell = Date.now() - pageLoadedAt;
+
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         errBox.classList.add('show');
         return;
@@ -1151,6 +1160,16 @@
       const originalLabel = submitBtn.textContent;
       submitBtn.disabled = true;
       submitBtn.textContent = '…';
+
+      // Anti-bot: honeypot lleno o submit instantáneo → fake success.
+      // Los bots ven "ok" y se van; el email nunca sale de aquí.
+      if (honeypot.length > 0 || dwell < 1200) {
+        okBox.classList.add('show');
+        form.reset();
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalLabel;
+        return;
+      }
 
       try {
         if (FORM_ENDPOINT.includes('YOUR_DEPLOY_ID')) {
@@ -1165,8 +1184,10 @@
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             email,
-            source: 'landing-validation',
-            lang: document.documentElement.lang || 'es'
+            source: 'landing-v1',
+            lang: document.documentElement.lang || 'es',
+            hp: honeypot,      // el server también valida por si alguien salta el JS
+            dwell              // tiempo hasta el submit; señal débil pero útil
           })
         });
         let data = null;
