@@ -11,6 +11,8 @@ Landing de validación para **Fix Posture** — herramienta de bienestar postura
 
 **Cómo probar localmente:** abre `landing/index.html` en el navegador.
 
-**Cómo desplegar:** conectado a Vercel. Root Directory: `landing`. Cada push a `main` redepliega.
+**Cómo desplegar:** conectado a Vercel (`vercel.json` en la raíz declara `outputDirectory: "landing"`, así que Vercel sirve `landing/` como site root sin depender del ajuste de Root Directory del panel). Cada push a `main` redepliega automáticamente.
+
+**URL pública actual:** [fixposture-kappa.vercel.app](https://fixposture-kappa.vercel.app)
 
 **Endpoint de waitlist:** Google Apps Script Web App vinculado a la Sheet privada "Fix Posture — Waitlist". Guarda `[timestamp, email, source, lang, confirmed]` y responde con el correo de bienvenida bilingüe (ES/EN).
