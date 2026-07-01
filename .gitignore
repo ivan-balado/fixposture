@@ -1,0 +1,25 @@
+# Documentación estratégica interna (no publicar)
+PRD_v*.md
+
+# Claude Code / tooling local
+.claude/
+*.log
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node / Python (por si algún día se añaden herramientas)
+node_modules/
+dist/
+build/
+.env
+.env.*
+__pycache__/

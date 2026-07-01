@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="description" content="Fix Posture — Mejora tu postura sin salir de casa. Análisis postural con IA en 2 minutos." data-i18n-attr="content" data-i18n="meta.description" />
+  <title data-i18n="meta.title">Fix Posture — Mejora tu postura sin salir de casa</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =========================================================
+       Reset + tokens extraídos del Figma (canvas 1728px)
+       ========================================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    img, svg { display: block; max-width: 100%; height: auto; }
+    button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+    a { color: inherit; text-decoration: none; }
+    input, textarea { font: inherit; }
+    ::selection { background: #080808; color: #fff; }
+
+    :root {
+      /* Colores exactos del Figma */
+      --ink:            #080808;
+      --ink-2:          #605b5b;
+      --ink-3:          #5e5d5d;
+      --line:           #d8d8d8;
+      --muted:          #fafafa;
+      --bg:             #ffffff;
+      --dark:           #1a1920;
+      --dark-2:         #232228;
+      --dark-star:      #2c2b34;
+      --accent-blue:    #2160e8;
+      --accent-blue-bg: #f1f0ff;
+      --grad-end:       #eff3f9;
+
+      /* Radios */
+      --radius-pill: 999px;
+      --radius-badge: 6px;
+      --radius-card: 6px;
+      --radius-input: 999px;
+
+      /* Layout */
+      --container-max: 1728px;
+      --pad-x-desktop: 100px;
+      --pad-x-tablet:  40px;
+      --pad-x-mobile:  20px;
+
+      /* Tipos base (fluid) */
+      --fs-display: clamp(2.5rem, 1.35rem + 4.9vw, 6rem);          /* 40 → 96 */
+      --fs-h2:      clamp(1.75rem, 1.05rem + 3.0vw, 3rem);         /* 28 → 48 */
+      --fs-h2-sm:   clamp(1.75rem, 1.2rem + 2.35vw, 2.5rem);       /* 28 → 40 */
+      --fs-h3:      clamp(1.25rem, 0.95rem + 1.28vw, 1.6875rem);   /* 20 → 27 */
+      --fs-h4:      clamp(1.125rem, 1.0rem + 0.55vw, 1.375rem);    /* 18 → 22 */
+      --fs-lede:    clamp(1rem, 0.90rem + 0.5vw, 1.25rem);         /* 16 → 20 */
+      --fs-body:    clamp(0.9375rem, 0.87rem + 0.30vw, 1.125rem);  /* 15 → 18 */
+      --fs-nano:    0.875rem;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    /* ======= Layout base ======= */
+    .container {
+      width: 100%;
+      max-width: var(--container-max);
+      margin-inline: auto;
+      padding-inline: var(--pad-x-mobile);
+    }
+    @media (min-width: 720px)  { .container { padding-inline: var(--pad-x-tablet); } }
+    @media (min-width: 1200px) { .container { padding-inline: var(--pad-x-desktop); } }
+
+    .visually-hidden {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    /* ======= Tipografía ======= */
+    h1, h2, h3, h4 { color: var(--ink); letter-spacing: -0.03em; line-height: 1.04; font-weight: 300; }
+    h1.display {
+      font-size: var(--fs-display);
+      font-weight: 300;
+      letter-spacing: -0.08em;
+      line-height: 1.04;
+    }
+    h2.h2 {
+      font-size: var(--fs-h2);
+      font-weight: 400;
+      letter-spacing: -0.05em;
+      line-height: 1.04;
+    }
+    h2.h2-sm {
+      font-size: var(--fs-h2-sm);
+      font-weight: 400;
+      letter-spacing: -0.05em;
+      line-height: 1.04;
+    }
+    h3.h3 {
+      font-size: var(--fs-h3);
+      font-weight: 500;
+      letter-spacing: -0.04em;
+      line-height: 1.27;
+    }
+    .lede {
+      font-size: var(--fs-lede);
+      color: var(--ink-2);
+      font-weight: 300;
+      line-height: 1.8;
+      letter-spacing: -0.02em;
+    }
+
+    /* ======= Botones ======= */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 14px 24px;
+      border-radius: var(--radius-pill);
+      font-family: 'Instrument Sans', 'Inter', sans-serif;
+      font-weight: 500; font-size: 16px; letter-spacing: -0.02em;
+      min-height: 48px;
+      white-space: nowrap;
+      transition: transform .15s ease, background .2s ease, box-shadow .2s ease, color .2s ease;
+    }
+    .btn-dark  { background: var(--ink); color: #fff; }
+    .btn-dark:hover  { background: #000; transform: translateY(-1px); }
+    .btn-light { background: #fff; color: var(--ink); }
+    .btn-light:hover { background: #f5f5f5; }
+    .btn-ghost { background: transparent; color: var(--ink); }
+    .btn-ghost:hover { background: rgba(0,0,0,0.05); }
+
+    /* =========================================================
+       HEADER
+       ========================================================= */
+    .header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(216,216,216,0.6);
+    }
+    .header-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      min-height: 86px;
+      padding-block: 14px;
+    }
+    .brand { display: inline-flex; align-items: center; gap: 14px; }
+    .brand svg { display: block; }
+    .header-cta { padding: 14px 24px; min-height: 48px; }
+    .lang-toggle {
+      display: inline-flex; align-items: center; gap: 4px;
+      margin-right: 16px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px;
+    }
+    .lang-toggle button {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 999px;
+      color: var(--ink-2);
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    .lang-toggle button[aria-pressed="true"] {
+      background: var(--ink);
+      color: #fff;
+    }
+    .header-right { display: inline-flex; align-items: center; }
+
+    /* =========================================================
+       HERO
+       ========================================================= */
+    .hero {
+      position: relative;
+      background: #fff;
+      overflow: hidden;
+      min-height: clamp(560px, 61vw, 1050px);
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .hero-bg .img {
+      position: absolute;
+      inset: 0;
+      background-image: url('assets/hero-bg.png');
+      background-repeat: no-repeat;
+      background-position: right center;
+      background-size: cover;
+    }
+    .hero-bg .grad {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(183.67deg, rgba(255,255,255,0) 44.875%, rgba(255,255,255,1) 88.869%),
+        linear-gradient(266.22deg, rgba(255,255,255,0) 12.876%, rgba(255,255,255,1) 92.609%);
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      min-height: clamp(560px, 61vw, 1050px);
+      padding-block: clamp(60px, 8vw, 120px);
+    }
+    .hero-copy {
+      max-width: 858px;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(28px, 3vw, 48px);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 20px;
+      background: var(--accent-blue-bg);
+      color: var(--accent-blue);
+      border-radius: var(--radius-badge);
+      font-size: 16px;
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      line-height: 1.27;
+      align-self: flex-start;
+    }
+    .hero-text-stack {
+      display: flex; flex-direction: column;
+      gap: clamp(16px, 1.5vw, 24px);
+    }
+    .hero-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* =========================================================
+       SERVICES (Tres pasos)
+       ========================================================= */
+    .services {
+      background: linear-gradient(180deg, #ffffff 0%, var(--grad-end) 100%);
+      padding-block: clamp(64px, 6vw, 100px) clamp(80px, 10vw, 200px);
+    }
+    .services-head {
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      gap: clamp(18px, 2vw, 38px);
+      margin-bottom: clamp(48px, 5vw, 80px);
+    }
+    .services-head .h2 { max-width: 720px; }
+    .services-head .lede { max-width: 900px; }
+
+    .steps {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      border-top: 1px solid var(--line);
+      padding-top: 0;
+    }
+    @media (min-width: 900px) {
+      .steps {
+        grid-template-columns: 1fr 1px 1fr 1px 1fr;
+        gap: 20px;
+        align-items: stretch;
+      }
+      .steps-divider {
+        background: var(--line);
+        width: 1px;
+        height: auto;
+        align-self: stretch;
+      }
+    }
+    .step-card {
+      display: flex; flex-direction: column;
+      gap: 34px;
+      padding: 40px;
+      overflow: hidden;
+    }
+    .step-img {
+      height: 235px;
+      position: relative;
+      overflow: hidden;
+    }
+    .step-text {
+      text-align: center;
+      display: flex; flex-direction: column;
+      gap: 16px;
+    }
+    .step-text h3 {
+      font-size: var(--fs-h3);
+      font-weight: 500;
+      letter-spacing: -0.04em;
+      line-height: 1.27;
+    }
+    .step-text p {
+      font-size: var(--fs-body);
+      color: var(--ink-3);
+      font-weight: 300;
+      line-height: 1.5;
+      letter-spacing: -0.02em;
+    }
+    .steps-divider { display: none; }
+    @media (min-width: 900px) {
+      .steps-divider { display: block; }
+    }
+
+    /* --- Step 1: 3 tarot cards con silueta --- */
+    .tarot {
+      position: relative;
+      width: 100%;
+      max-width: 402px;
+      height: 235px;
+      margin-inline: auto;
+    }
+    .tarot-card {
+      position: absolute;
+      background: #fff;
+      border: 1px solid #000;
+      border-radius: 5px;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-inline: 10px;
+      padding-top: 10px;
+    }
+    .tarot-card .body {
+      width: 100%;
+      height: calc(100% - 4px);
+      background-image: url('assets/silhouette-raw-a.png');
+      background-repeat: no-repeat;
+      background-size: 300% auto;
+      background-position-y: -8%;
+    }
+    .tarot-card.card-1 {
+      left: 8%;
+      top: 14px;
+      width: 115px;
+      height: 176px;
+      transform: rotate(-17.64deg);
+      opacity: 0.22;
+    }
+    .tarot-card.card-1 .body { background-position-x: 12%; }
+    .tarot-card.card-2 {
+      left: 35%;
+      top: 8px;
+      width: 110px;
+      height: 176px;
+      transform: rotate(3.63deg);
+      border-color: #8c8c8c;
+    }
+    .tarot-card.card-2 .body { background-position-x: 12%; opacity: 0.43; }
+    .tarot-card.card-3 {
+      left: 51%;
+      top: 12px;
+      width: 108px;
+      height: 176px;
+      transform: rotate(30deg);
+    }
+    .tarot-card.card-3 .body { background-position-x: 100%; }
+
+    /* --- Step 2: sparkles (AI) --- */
+    .sparkles {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      margin: 20px auto 0;
+    }
+    .sparkle {
+      position: absolute;
+      fill: none;
+      stroke: #000;
+      stroke-width: 1.5;
+    }
+    .sparkle-a { top: 0;   left: 0;   width: 121px; height: 121px; }
+    .sparkle-b { top: 66px; left: 100px; width: 61px;  height: 61px;  }
+    .sparkle-c { top: 5px;  left: 105px; width: 40px;  height: 40px;  }
+
+    /* --- Step 3: report card --- */
+    .report {
+      position: relative;
+      width: 177px;
+      height: 218px;
+      margin: 8px auto 0;
+      border: 1px solid #000;
+      border-radius: 7px;
+      padding: 20px;
+      background: transparent;
+    }
+    .report .line {
+      background: #000;
+      height: 1px;
+      margin-block: 6px;
+    }
+    .report .line.first { width: 60%; margin-top: 12px; margin-bottom: 14px; }
+    .report .line.short { width: 100%; }
+    .report .line.mid   { width: 100%; }
+    .report .line.last  { width: 55%; margin-top: 10px; }
+
+    /* =========================================================
+       CTA (Sé de los primeros...)
+       ========================================================= */
+    .cta {
+      position: relative;
+      background: var(--dark);
+      color: #fff;
+      overflow: hidden;
+    }
+    .cta-inner {
+      position: relative;
+      z-index: 2;
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      padding-block: clamp(80px, 11vw, 127px);
+      gap: 44px;
+    }
+    .cta h2 {
+      color: #fff;
+      font-size: clamp(2rem, 1.05rem + 4.4vw, 3.75rem);   /* 32 → 60 */
+      font-weight: 400;
+      letter-spacing: -0.05em;
+      line-height: 1.1;
+      max-width: 1200px;
+    }
+    .cta p {
+      color: rgba(255,255,255,0.85);
+      max-width: 920px;
+      font-size: var(--fs-lede);
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      line-height: 1.5;
+    }
+    .waitlist {
+      width: 100%;
+      max-width: 556px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+    }
+    .waitlist-form {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 17px;
+      width: 100%;
+    }
+    @media (max-width: 559px) {
+      .waitlist-form {
+        grid-template-columns: 1fr;
+      }
+    }
+    .waitlist input[type="email"] {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.16);
+      color: #fff;
+      padding: 14px 24px;
+      border-radius: var(--radius-input);
+      min-height: 47px;
+      font-size: 16px;
+      letter-spacing: -0.02em;
+      outline: none;
+      transition: border-color .2s, background .2s;
+    }
+    .waitlist input[type="email"]::placeholder { color: rgba(255,255,255,0.55); }
+    .waitlist input[type="email"]:focus {
+      border-color: rgba(255,255,255,0.55);
+      background: rgba(255,255,255,0.13);
+    }
+    .waitlist .btn { padding: 14px 24px; min-height: 47px; }
+    .waitlist-foot {
+      color: rgba(255,255,255,0.55);
+      font-size: 14px;
+      font-weight: 300;
+      letter-spacing: -0.01em;
+      max-width: 900px;
+    }
+    .form-msg { display: none; font-size: 14px; font-weight: 400; }
+    .form-msg.ok  { color: #7cffa8; }
+    .form-msg.err { color: #ff8f8f; }
+    .form-msg.show { display: block; }
+
+    .star {
+      position: absolute;
+      opacity: 0.75;
+      filter: drop-shadow(0 0 40px rgba(0,0,0,0.4));
+      pointer-events: none;
+      color: var(--dark-star);
+    }
+    .star svg { width: 100%; height: 100%; display: block; }
+    .star.left {
+      top: -117px;
+      left: 26px;
+      width: 320px; height: 320px;
+      transform: rotate(-18deg);
+    }
+    .star.right {
+      top: 380px;
+      right: -95px;
+      width: 573px; height: 573px;
+      transform: rotate(38deg);
+    }
+    @media (max-width: 720px) {
+      .star.left  { width: 180px; height: 180px; top: -60px; left: -20px; }
+      .star.right { width: 300px; height: 300px; top: auto; bottom: -80px; right: -80px; }
+    }
+
+    /* =========================================================
+       Detect (¿Qué detectamos?)
+       ========================================================= */
+    .detect {
+      padding-block: clamp(72px, 10vw, 200px) clamp(72px, 10vw, 200px);
+      background: #fff;
+    }
+    .detect-head {
+      text-align: center;
+      display: flex; flex-direction: column; align-items: center;
+      gap: clamp(20px, 3vw, 38px);
+      margin-bottom: clamp(56px, 6vw, 80px);
+    }
+    .detect-head .h2-sm { max-width: 720px; }
+    .detect-head .lede  { max-width: 1100px; }
+    .detect-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      border-top: 1px solid var(--line);
+      padding-top: 20px;
+    }
+    @media (min-width: 640px)  { .detect-grid { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1024px) { .detect-grid { grid-template-columns: 1fr 1fr 1fr; } }
+
+    .detect-card {
+      background: var(--muted);
+      padding: 40px;
+      border-radius: var(--radius-card);
+      display: flex; flex-direction: column; gap: 10px;
+      min-height: 143px;
+    }
+    .detect-card h3 {
+      font-size: var(--fs-h4);
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      line-height: 1.27;
+    }
+    .detect-card p {
+      color: var(--ink-3);
+      font-size: 16px;
+      font-weight: 300;
+      line-height: 1.5;
+      letter-spacing: -0.01em;
+    }
+
+    /* =========================================================
+       FAQ
+       ========================================================= */
+    .faq {
+      background: #fff;
+      padding-block: clamp(72px, 10vw, 200px) clamp(80px, 10vw, 200px);
+    }
+    .faq-head {
+      text-align: center;
+      margin-bottom: clamp(48px, 6vw, 80px);
+    }
+    .faq-list {
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    .faq-card {
+      background: var(--muted);
+      border-radius: var(--radius-card);
+      padding: 20px;
+    }
+    .faq-card summary {
+      list-style: none;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 24px;
+    }
+    .faq-card summary::-webkit-details-marker { display: none; }
+    .faq-card summary .plus {
+      flex-shrink: 0;
+      width: 20px; height: 20px;
+      position: relative;
+      transition: transform .25s ease;
+      color: var(--ink-3);
+    }
+    .faq-card summary .plus::before,
+    .faq-card summary .plus::after {
+      content: '';
+      position: absolute;
+      background: currentColor;
+      inset: 0; margin: auto;
+    }
+    .faq-card summary .plus::before { width: 12px; height: 1.5px; }
+    .faq-card summary .plus::after  { width: 1.5px; height: 12px; transition: transform .25s ease; }
+    .faq-card[open] summary .plus::after { transform: rotate(90deg); }
+
+    .faq-card p {
+      margin-top: 16px;
+      color: var(--ink-3);
+      font-size: 16px;
+      font-weight: 300;
+      line-height: 1.7;
+      letter-spacing: -0.01em;
+    }
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+    .footer {
+      background: var(--dark);
+      color: #fff;
+      padding-block: clamp(60px, 6vw, 100px) 30px;
+      overflow: hidden;
+    }
+    .footer-main {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+    @media (min-width: 900px) {
+      .footer-main {
+        grid-template-columns: minmax(280px, 588px) 1fr;
+        gap: 44px;
+      }
+    }
+    .footer-logo {
+      display: inline-flex; align-items: center; gap: 14px;
+      color: #fff;
+    }
+    .footer-logo svg path { fill: #fff !important; }
+    .footer-disclaimer {
+      color: rgba(255,255,255,0.75);
+      font-size: 16px;
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      line-height: 1.5;
+      max-width: 896px;
+    }
+
+    .footer-big-text {
+      display: block;
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      color: rgba(255,255,255,0.06);
+      letter-spacing: -0.06em;
+      line-height: 0.9;
+      user-select: none;
+      font-size: clamp(4rem, 17vw, 18rem); /* fits ~1528px on desktop */
+      margin-top: clamp(60px, 6vw, 100px);
+      margin-bottom: clamp(60px, 5vw, 90px);
+      white-space: nowrap;
+    }
+
+    .subfooter {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      color: rgba(255,255,255,0.65);
+      font-size: 15px;
+      font-weight: 300;
+      letter-spacing: -0.01em;
+    }
+    .subfooter .links { display: inline-flex; gap: 30px; flex-wrap: wrap; }
+    .subfooter a:hover { color: #fff; text-decoration: underline; }
+
+    /* =========================================================
+       Micro-anim (respeta prefers-reduced-motion)
+       ========================================================= */
+    @media (prefers-reduced-motion: no-preference) {
+      .reveal { opacity: 0; transform: translateY(12px); transition: opacity .7s ease, transform .7s ease; }
+      .reveal.in { opacity: 1; transform: none; }
+    }
+
+    /* =========================================================
+       Ajustes móvil finos
+       ========================================================= */
+    @media (max-width: 720px) {
+      .header-inner { min-height: 68px; }
+      .header-cta { padding: 10px 18px; min-height: 40px; font-size: 15px; }
+      .lang-toggle { margin-right: 10px; }
+      .hero-bg .img {
+        background-position: 70% center;
+        opacity: 0.35;
+      }
+      .hero-bg .grad {
+        background:
+          linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.95) 60%, #fff 100%);
+      }
+      .step-card { padding: 24px; }
+      .subfooter .links { gap: 18px; }
+      .subfooter { font-size: 14px; }
+    }
+    @media (max-width: 480px) {
+      .brand span { font-size: 17px !important; }
+      .lang-toggle { padding: 3px; }
+      .lang-toggle button { padding: 3px 7px; font-size: 11px; }
+      .header-cta { padding: 8px 14px; font-size: 14px; }
+      .header-inner { gap: 8px; }
+      .step-card { padding: 20px; }
+      .detect-card { padding: 28px; }
+      .waitlist-foot { font-size: 13px; }
+    }
+    @media (max-width: 380px) {
+      .brand span { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================== HEADER ================== -->
+  <header class="header">
+    <div class="container header-inner">
+      <a href="#top" class="brand" aria-label="Fix Posture">
+        <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M10.0759 11.8975C14.0038 10.019 17.0778 6.83112 18.8425 2.8463C17.704 1.65085 16.2239 0.796964 14.63 0.28463L13.7761 0C13.7192 0.113852 13.6622 0.284637 13.6622 0.398489C12.296 4.26946 9.50665 7.40038 5.74953 9.16509C3.13093 10.4175 1.19545 12.6945 0.28463 15.4269L0 16.2808C0.113852 16.3378 0.284633 16.3947 0.398485 16.3947C1.48008 16.7932 2.56167 17.3055 3.58634 17.9317C5.00949 15.37 7.28653 13.2068 10.0759 11.8975Z" fill="#080808"/>
+          <path d="M26.5845 12.1252C24.4782 15.3131 21.575 17.8748 17.9887 19.5826C15.0854 20.9488 12.8653 23.5105 11.8407 26.5845L11.556 27.5522C12.6376 28.5199 13.9469 29.26 15.3701 29.7154L16.224 30C16.2809 29.8862 16.3378 29.7154 16.3378 29.6015C17.704 25.7306 20.4934 22.5996 24.2505 20.8349C26.8691 19.5826 28.8615 17.3055 29.7154 14.5731L30.0001 13.7192C28.8046 13.3776 27.6661 12.8084 26.5845 12.1252Z" fill="#080808"/>
+          <path d="M9.27892 24.5921C10.7021 21.1765 13.3207 18.3871 16.6793 16.7932C19.7533 15.3131 22.315 13.0361 24.0797 10.2467C22.7704 8.99434 21.6888 7.57118 20.8918 5.8634C18.7856 9.73437 15.4839 12.8653 11.4421 14.8008C9.10814 15.8824 7.22958 17.761 6.09106 20.038C7.34344 21.2334 8.36811 22.7135 9.16507 24.3644C9.16507 24.3644 9.22199 24.4782 9.27892 24.5921Z" fill="#080808"/>
+        </svg>
+        <span style="font-family:'Inter';font-weight:400;font-size:20px;letter-spacing:-0.02em;color:var(--ink);">Fix Posture</span>
+      </a>
+      <div class="header-right">
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button type="button" data-lang="es" aria-pressed="true">ES</button>
+          <button type="button" data-lang="en" aria-pressed="false">EN</button>
+        </div>
+        <a href="#cta" class="btn btn-dark header-cta" data-i18n="nav.cta">Apúntate</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================== HERO ================== -->
+  <section id="top" class="hero" aria-labelledby="hero-title">
+    <div class="hero-bg" aria-hidden="true">
+      <div class="img"></div>
+      <div class="grad"></div>
+    </div>
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <span class="badge reveal in" data-i18n="hero.badge">500 plazas disponibles</span>
+        <div class="hero-text-stack">
+          <h1 id="hero-title" class="display reveal in" data-i18n="hero.title">Mejora tu postura sin salir de casa.</h1>
+          <p class="lede reveal in" data-i18n="hero.lede">Sube 3 fotos y recibe un análisis postural con IA y un plan de ejercicios correctivos personalizado. En 2 minutos. Sin fisio.</p>
+        </div>
+        <div class="hero-buttons reveal in">
+          <a href="#cta" class="btn btn-dark" data-i18n="hero.ctaPrimary">Consigue un 50%</a>
+          <a href="#how" class="btn btn-ghost" data-i18n="hero.ctaSecondary">Cómo funciona</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== SERVICES (3 pasos) ================== -->
+  <section id="how" class="services">
+    <div class="container">
+      <div class="services-head">
+        <h2 class="h2" data-i18n="how.title">Tres pasos. Diez minutos. Cero excusas.</h2>
+        <p class="lede" data-i18n="how.sub">Diseñado para que cualquier persona pueda hacerlo en casa, sin equipo y sin conocimientos técnicos</p>
+      </div>
+      <div class="steps">
+        <article class="step-card">
+          <div class="step-img" aria-hidden="true">
+            <div class="tarot">
+              <div class="tarot-card card-1"><div class="body"></div></div>
+              <div class="tarot-card card-2"><div class="body"></div></div>
+              <div class="tarot-card card-3"><div class="body"></div></div>
+            </div>
+          </div>
+          <div class="step-text">
+            <h3 data-i18n="how.s1Title">Sube 3 fotos</h3>
+            <p data-i18n="how.s1Body">Una frontal, una de espalda y una lateral. Te guiamos con una silueta para que el encuadre sea correcto.</p>
+          </div>
+        </article>
+
+        <div class="steps-divider" aria-hidden="true"></div>
+
+        <article class="step-card">
+          <div class="step-img" aria-hidden="true">
+            <div class="sparkles">
+              <svg class="sparkle sparkle-a" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
+                <path d="M55 5 C58 30 80 52 105 55 C80 58 58 80 55 105 C52 80 30 58 5 55 C30 52 52 30 55 5 Z"/>
+              </svg>
+              <svg class="sparkle sparkle-b" viewBox="0 0 55 55" xmlns="http://www.w3.org/2000/svg">
+                <path d="M27.5 3 C29 15 40 26 52 27.5 C40 29 29 40 27.5 52 C26 40 15 29 3 27.5 C15 26 26 15 27.5 3 Z"/>
+              </svg>
+              <svg class="sparkle sparkle-c" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 2 C19 10 26 17 34 18 C26 19 19 26 18 34 C17 26 10 19 2 18 C10 17 17 10 18 2 Z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="step-text">
+            <h3 data-i18n="how.s2Title">La IA analiza tu postura</h3>
+            <p data-i18n="how.s2Body">Detectamos asimetrías de hombros, cabeza adelantada, inclinación pélvica y desbalances visibles. Procesamiento en tu dispositivo.</p>
+          </div>
+        </article>
+
+        <div class="steps-divider" aria-hidden="true"></div>
+
+        <article class="step-card">
+          <div class="step-img" aria-hidden="true">
+            <div class="report">
+              <div class="line first"></div>
+              <div class="line short"></div>
+              <div class="line mid"></div>
+              <div class="line mid"></div>
+              <div class="line mid"></div>
+              <div class="line mid"></div>
+              <div class="line last"></div>
+            </div>
+          </div>
+          <div class="step-text">
+            <h3 data-i18n="how.s3Title">Recibe tu plan personalizado</h3>
+            <p data-i18n="how.s3Body">Rutina de 3-5 ejercicios correctivos en vídeo, adaptada a tus hallazgos. Reevalúa cada mes y mide tu progreso.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== CTA ================== -->
+  <section id="cta" class="cta" aria-labelledby="cta-title">
+    <div class="star left" aria-hidden="true">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <path fill="currentColor" d="M100 8 C112 62 138 88 192 100 C138 112 112 138 100 192 C88 138 62 112 8 100 C62 88 88 62 100 8 Z"/>
+      </svg>
+    </div>
+    <div class="star right" aria-hidden="true">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <path fill="currentColor" d="M100 8 C112 62 138 88 192 100 C138 112 112 138 100 192 C88 138 62 112 8 100 C62 88 88 62 100 8 Z"/>
+      </svg>
+    </div>
+    <div class="container cta-inner">
+      <h2 id="cta-title" data-i18n="cta.title">Sé de los primeros y paga la mitad</h2>
+      <p data-i18n="cta.sub">Los primeros 500 emails de la waitlist tendrán un 50% de descuento de por vida cuando lancemos. Cero spam. Te avisamos cuando esté listo y nada más.</p>
+
+      <form class="waitlist" id="waitlistForm" novalidate>
+        <div class="waitlist-form">
+          <label class="visually-hidden" for="wf-email" data-i18n="cta.emailLabel">Email</label>
+          <input type="email" id="wf-email" name="email" required autocomplete="email"
+                 placeholder="tuemail@gmail.com" data-i18n-attr="placeholder" data-i18n="cta.placeholder" />
+          <button type="submit" class="btn btn-light" data-i18n="cta.submit">Quiero el descuento</button>
+        </div>
+        <div class="form-msg ok"  id="formSuccess" role="status" data-i18n="cta.success">¡Estás dentro! Te escribiremos cuando lancemos.</div>
+        <div class="form-msg err" id="formError"   role="alert"  data-i18n="cta.error">Algo falló. Inténtalo de nuevo.</div>
+        <p class="waitlist-foot" data-i18n="cta.foot">Al apuntarte aceptas recibir 1-2 emails sobre el lanzamiento. Puedes darte de baja en cualquier momento.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ================== DETECT (¿Qué detectamos?) ================== -->
+  <section class="detect" aria-labelledby="detect-title">
+    <div class="container">
+      <div class="detect-head">
+        <h2 id="detect-title" class="h2-sm" data-i18n="detect.title">¿Qué detectamos?</h2>
+        <p class="lede" data-i18n="detect.sub">Patrones posturales visibles. No diagnosticamos patologías para eso recomendamos a un especialista.</p>
+      </div>
+      <div class="detect-grid">
+        <article class="detect-card">
+          <h3 data-i18n="detect.i1Title">Hombros desnivelados</h3>
+          <p data-i18n="detect.i1Body">Diferencia de altura entre tu hombro izquierdo y derecho.</p>
+        </article>
+        <article class="detect-card">
+          <h3 data-i18n="detect.i2Title">Cabeza adelantada</h3>
+          <p data-i18n="detect.i2Body">Tu oreja queda por delante de tu hombro en vista lateral.</p>
+        </article>
+        <article class="detect-card">
+          <h3 data-i18n="detect.i3Title">Cifosis dorsal</h3>
+          <p data-i18n="detect.i3Body">Curvatura redondeada en la parte alta de tu espalda.</p>
+        </article>
+        <article class="detect-card">
+          <h3 data-i18n="detect.i4Title">Inclinación pélvica</h3>
+          <p data-i18n="detect.i4Body">Anteversión o retroversión visible en vista lateral.</p>
+        </article>
+        <article class="detect-card">
+          <h3 data-i18n="detect.i5Title">Asimetría de caderas</h3>
+          <p data-i18n="detect.i5Body">Una cadera más alta que la otra en vista posterior.</p>
+        </article>
+        <article class="detect-card">
+          <h3 data-i18n="detect.i6Title">Curvatura visible</h3>
+          <p data-i18n="detect.i6Body">Desviación lateral aparente de la línea de la columna.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== FAQ ================== -->
+  <section class="faq" aria-labelledby="faq-title">
+    <div class="container">
+      <div class="faq-head">
+        <h2 id="faq-title" class="h2-sm" data-i18n="faq.title">Preguntas Frecuentes</h2>
+      </div>
+      <div class="faq-list">
+        <details class="faq-card">
+          <summary>
+            <span data-i18n="faq.q1">¿Es un diagnóstico médico?</span>
+            <span class="plus" aria-hidden="true"></span>
+          </summary>
+          <p data-i18n="faq.a1">No. Fix Posture es una herramienta de bienestar. Detecta asimetrías visibles y recomienda ejercicios correctivos. Si tienes dolor o sospecha clínica, consulta a un fisioterapeuta o médico.</p>
+        </details>
+        <details class="faq-card">
+          <summary>
+            <span data-i18n="faq.q2">¿Mis fotos son privadas?</span>
+            <span class="plus" aria-hidden="true"></span>
+          </summary>
+          <p data-i18n="faq.a2">Sí. El análisis se hace en tu navegador con MediaPipe Pose. Las fotos no salen de tu dispositivo salvo que tú elijas guardarlas para comparar progreso.</p>
+        </details>
+        <details class="faq-card">
+          <summary>
+            <span data-i18n="faq.q3">¿Cuándo lanzáis?</span>
+            <span class="plus" aria-hidden="true"></span>
+          </summary>
+          <p data-i18n="faq.a3">Estimado finales de 2026. La waitlist es la forma de enterarte el primer día con el 50% de descuento de por vida.</p>
+        </details>
+        <details class="faq-card">
+          <summary>
+            <span data-i18n="faq.q4">¿Funciona en móvil?</span>
+            <span class="plus" aria-hidden="true"></span>
+          </summary>
+          <p data-i18n="faq.a4">Sí. Web responsive desde el primer día. App nativa más adelante.</p>
+        </details>
+        <details class="faq-card">
+          <summary>
+            <span data-i18n="faq.q5">¿Qué pasa si tengo escoliosis o dolor crónico?</span>
+            <span class="plus" aria-hidden="true"></span>
+          </summary>
+          <p data-i18n="faq.a5">No somos una herramienta de diagnóstico. Si tienes una condición clínica, debes acudir a un especialista. Fix Posture está pensado para personas sin patologías diagnosticadas que quieren mejorar hábitos posturales.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== FOOTER ================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-main">
+        <a href="#top" class="footer-logo" aria-label="Fix Posture">
+          <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M10.0759 11.8975C14.0038 10.019 17.0778 6.83112 18.8425 2.8463C17.704 1.65085 16.2239 0.796964 14.63 0.28463L13.7761 0C13.7192 0.113852 13.6622 0.284637 13.6622 0.398489C12.296 4.26946 9.50665 7.40038 5.74953 9.16509C3.13093 10.4175 1.19545 12.6945 0.28463 15.4269L0 16.2808C0.113852 16.3378 0.284633 16.3947 0.398485 16.3947C1.48008 16.7932 2.56167 17.3055 3.58634 17.9317C5.00949 15.37 7.28653 13.2068 10.0759 11.8975Z" fill="#fff"/>
+            <path d="M26.5845 12.1252C24.4782 15.3131 21.575 17.8748 17.9887 19.5826C15.0854 20.9488 12.8653 23.5105 11.8407 26.5845L11.556 27.5522C12.6376 28.5199 13.9469 29.26 15.3701 29.7154L16.224 30C16.2809 29.8862 16.3378 29.7154 16.3378 29.6015C17.704 25.7306 20.4934 22.5996 24.2505 20.8349C26.8691 19.5826 28.8615 17.3055 29.7154 14.5731L30.0001 13.7192C28.8046 13.3776 27.6661 12.8084 26.5845 12.1252Z" fill="#fff"/>
+            <path d="M9.27892 24.5921C10.7021 21.1765 13.3207 18.3871 16.6793 16.7932C19.7533 15.3131 22.315 13.0361 24.0797 10.2467C22.7704 8.99434 21.6888 7.57118 20.8918 5.8634C18.7856 9.73437 15.4839 12.8653 11.4421 14.8008C9.10814 15.8824 7.22958 17.761 6.09106 20.038C7.34344 21.2334 8.36811 22.7135 9.16507 24.3644C9.16507 24.3644 9.22199 24.4782 9.27892 24.5921Z" fill="#fff"/>
+          </svg>
+          <span style="font-family:'Inter';font-weight:400;font-size:20px;letter-spacing:-0.02em;color:#fff;">Fix Posture</span>
+        </a>
+        <p class="footer-disclaimer" data-i18n="footer.disclaimer">Fix Posture es una herramienta de bienestar, no un producto sanitario. No sustituye consulta médica. Si tienes dolor, lesión o sospecha clínica, consulta a un profesional sanitario.</p>
+      </div>
+
+      <div class="footer-big-text" aria-hidden="true">Fix Posture</div>
+
+      <div class="subfooter">
+        <div class="copy">© 2026 Fix Posture</div>
+        <div class="links">
+          <a href="#" data-i18n="footer.privacy">Política de privacidad</a>
+          <a href="#" data-i18n="footer.terms">Términos y condiciones</a>
+          <a href="#" data-i18n="footer.cookies">Cookies</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================== SCRIPTS ================== -->
+  <script>
+    // ============ i18n ============
+    const dict = {
+      es: {
+        'meta.title': 'Fix Posture — Mejora tu postura sin salir de casa',
+        'meta.description': 'Análisis postural con IA en 2 minutos. Plan de ejercicios correctivos personalizado.',
+        'nav.cta': 'Apúntate',
+        'hero.badge': '500 plazas disponibles',
+        'hero.title': 'Mejora tu postura sin salir de casa.',
+        'hero.lede': 'Sube 3 fotos y recibe un análisis postural con IA y un plan de ejercicios correctivos personalizado. En 2 minutos. Sin fisio.',
+        'hero.ctaPrimary': 'Consigue un 50%',
+        'hero.ctaSecondary': 'Cómo funciona',
+        'how.title': 'Tres pasos. Diez minutos. Cero excusas.',
+        'how.sub': 'Diseñado para que cualquier persona pueda hacerlo en casa, sin equipo y sin conocimientos técnicos',
+        'how.s1Title': 'Sube 3 fotos',
+        'how.s1Body': 'Una frontal, una de espalda y una lateral. Te guiamos con una silueta para que el encuadre sea correcto.',
+        'how.s2Title': 'La IA analiza tu postura',
+        'how.s2Body': 'Detectamos asimetrías de hombros, cabeza adelantada, inclinación pélvica y desbalances visibles. Procesamiento en tu dispositivo.',
+        'how.s3Title': 'Recibe tu plan personalizado',
+        'how.s3Body': 'Rutina de 3-5 ejercicios correctivos en vídeo, adaptada a tus hallazgos. Reevalúa cada mes y mide tu progreso.',
+        'cta.title': 'Sé de los primeros y paga la mitad',
+        'cta.sub': 'Los primeros 500 emails de la waitlist tendrán un 50% de descuento de por vida cuando lancemos. Cero spam. Te avisamos cuando esté listo y nada más.',
+        'cta.emailLabel': 'Email',
+        'cta.placeholder': 'tuemail@gmail.com',
+        'cta.submit': 'Quiero el descuento',
+        'cta.success': '¡Estás dentro! Te escribiremos cuando lancemos.',
+        'cta.error': 'Algo falló. Inténtalo de nuevo.',
+        'cta.foot': 'Al apuntarte aceptas recibir 1-2 emails sobre el lanzamiento. Puedes darte de baja en cualquier momento.',
+        'detect.title': '¿Qué detectamos?',
+        'detect.sub': 'Patrones posturales visibles. No diagnosticamos patologías para eso recomendamos a un especialista.',
+        'detect.i1Title': 'Hombros desnivelados',
+        'detect.i1Body': 'Diferencia de altura entre tu hombro izquierdo y derecho.',
+        'detect.i2Title': 'Cabeza adelantada',
+        'detect.i2Body': 'Tu oreja queda por delante de tu hombro en vista lateral.',
+        'detect.i3Title': 'Cifosis dorsal',
+        'detect.i3Body': 'Curvatura redondeada en la parte alta de tu espalda.',
+        'detect.i4Title': 'Inclinación pélvica',
+        'detect.i4Body': 'Anteversión o retroversión visible en vista lateral.',
+        'detect.i5Title': 'Asimetría de caderas',
+        'detect.i5Body': 'Una cadera más alta que la otra en vista posterior.',
+        'detect.i6Title': 'Curvatura visible',
+        'detect.i6Body': 'Desviación lateral aparente de la línea de la columna.',
+        'faq.title': 'Preguntas Frecuentes',
+        'faq.q1': '¿Es un diagnóstico médico?',
+        'faq.a1': 'No. Fix Posture es una herramienta de bienestar. Detecta asimetrías visibles y recomienda ejercicios correctivos. Si tienes dolor o sospecha clínica, consulta a un fisioterapeuta o médico.',
+        'faq.q2': '¿Mis fotos son privadas?',
+        'faq.a2': 'Sí. El análisis se hace en tu navegador con MediaPipe Pose. Las fotos no salen de tu dispositivo salvo que tú elijas guardarlas para comparar progreso.',
+        'faq.q3': '¿Cuándo lanzáis?',
+        'faq.a3': 'Estimado finales de 2026. La waitlist es la forma de enterarte el primer día con el 50% de descuento de por vida.',
+        'faq.q4': '¿Funciona en móvil?',
+        'faq.a4': 'Sí. Web responsive desde el primer día. App nativa más adelante.',
+        'faq.q5': '¿Qué pasa si tengo escoliosis o dolor crónico?',
+        'faq.a5': 'No somos una herramienta de diagnóstico. Si tienes una condición clínica, debes acudir a un especialista. Fix Posture está pensado para personas sin patologías diagnosticadas que quieren mejorar hábitos posturales.',
+        'footer.disclaimer': 'Fix Posture es una herramienta de bienestar, no un producto sanitario. No sustituye consulta médica. Si tienes dolor, lesión o sospecha clínica, consulta a un profesional sanitario.',
+        'footer.privacy': 'Política de privacidad',
+        'footer.terms': 'Términos y condiciones',
+        'footer.cookies': 'Cookies'
+      },
+      en: {
+        'meta.title': 'Fix Posture — Improve your posture without leaving home',
+        'meta.description': 'AI-powered posture analysis in 2 minutes. Personalized corrective exercise plan.',
+        'nav.cta': 'Join waitlist',
+        'hero.badge': '500 spots available',
+        'hero.title': 'Improve your posture without leaving home.',
+        'hero.lede': 'Upload 3 photos and get an AI posture analysis plus a personalized corrective exercise plan. In 2 minutes. No physio required.',
+        'hero.ctaPrimary': 'Get 50% off',
+        'hero.ctaSecondary': 'How it works',
+        'how.title': 'Three steps. Ten minutes. Zero excuses.',
+        'how.sub': 'Designed so anyone can do it at home — no equipment, no technical skills required.',
+        'how.s1Title': 'Upload 3 photos',
+        'how.s1Body': 'One front, one back, one side view. We guide you with a silhouette so the framing is right.',
+        'how.s2Title': 'AI analyzes your posture',
+        'how.s2Body': 'We detect shoulder asymmetry, forward head posture, pelvic tilt and visible imbalances. Processed on your device.',
+        'how.s3Title': 'Get your personalized plan',
+        'how.s3Body': 'A routine of 3-5 corrective video exercises, tailored to your findings. Reassess monthly and track your progress.',
+        'cta.title': 'Be first and pay half',
+        'cta.sub': 'The first 500 emails on the waitlist get 50% off for life when we launch. Zero spam. We email when it ships, nothing else.',
+        'cta.emailLabel': 'Email',
+        'cta.placeholder': 'you@email.com',
+        'cta.submit': 'I want the discount',
+        'cta.success': "You're in! We'll email you when we launch.",
+        'cta.error': 'Something went wrong. Please try again.',
+        'cta.foot': 'By joining you agree to receive 1-2 emails about the launch. Unsubscribe anytime.',
+        'detect.title': 'What we detect',
+        'detect.sub': 'Visible postural patterns. We do not diagnose pathology — for that, see a specialist.',
+        'detect.i1Title': 'Uneven shoulders',
+        'detect.i1Body': 'Height difference between your left and right shoulder.',
+        'detect.i2Title': 'Forward head posture',
+        'detect.i2Body': 'Your ear sits in front of your shoulder in side view.',
+        'detect.i3Title': 'Thoracic kyphosis',
+        'detect.i3Body': 'Rounded curvature in the upper back.',
+        'detect.i4Title': 'Pelvic tilt',
+        'detect.i4Body': 'Anterior or posterior tilt visible from the side.',
+        'detect.i5Title': 'Hip asymmetry',
+        'detect.i5Body': 'One hip higher than the other in rear view.',
+        'detect.i6Title': 'Visible curvature',
+        'detect.i6Body': 'Apparent lateral deviation of the spine line.',
+        'faq.title': 'Frequently asked questions',
+        'faq.q1': 'Is this a medical diagnosis?',
+        'faq.a1': 'No. Fix Posture is a wellness tool. It detects visible asymmetries and recommends corrective exercises. If you have pain or clinical concerns, see a physiotherapist or doctor.',
+        'faq.q2': 'Are my photos private?',
+        'faq.a2': 'Yes. Analysis runs in your browser with MediaPipe Pose. Photos never leave your device unless you choose to save them for progress comparison.',
+        'faq.q3': 'When are you launching?',
+        'faq.a3': 'Estimated late 2026. The waitlist is how you find out on day one with 50% off for life.',
+        'faq.q4': 'Does it work on mobile?',
+        'faq.a4': 'Yes. Responsive web from day one. Native app later.',
+        'faq.q5': 'What if I have scoliosis or chronic pain?',
+        'faq.a5': 'We are not a diagnostic tool. If you have a clinical condition, please see a specialist. Fix Posture is built for people without diagnosed pathologies who want to improve postural habits.',
+        'footer.disclaimer': 'Fix Posture is a wellness tool, not a medical device. It does not replace professional medical consultation. If you have pain, injury, or clinical concerns, please see a healthcare professional.',
+        'footer.privacy': 'Privacy policy',
+        'footer.terms': 'Terms & conditions',
+        'footer.cookies': 'Cookies'
+      }
+    };
+
+    function applyLang(lang) {
+      const map = dict[lang] || dict.es;
+      document.documentElement.lang = lang;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        const val = map[key];
+        if (val == null) return;
+        const attr = el.getAttribute('data-i18n-attr');
+        if (attr) el.setAttribute(attr, val);
+        else el.textContent = val;
+      });
+      document.querySelectorAll('.lang-toggle button').forEach(btn => {
+        btn.setAttribute('aria-pressed', btn.dataset.lang === lang ? 'true' : 'false');
+      });
+      try { localStorage.setItem('fp_lang', lang); } catch(_) {}
+    }
+    document.querySelectorAll('.lang-toggle button').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+    let initialLang = 'es';
+    try {
+      const saved = localStorage.getItem('fp_lang');
+      if (saved && dict[saved]) initialLang = saved;
+      else if ((navigator.language || '').toLowerCase().startsWith('en')) initialLang = 'en';
+    } catch(_) {}
+    applyLang(initialLang);
+
+    // ============ Reveal on scroll (respeta prefers-reduced-motion) ============
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+      }, { threshold: 0.15 });
+      document.querySelectorAll('.reveal:not(.in)').forEach(el => io.observe(el));
+    } else {
+      document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+    }
+
+    // ============ Waitlist form ============
+    // Endpoint: Google Apps Script Web App vinculado al Sheet de la waitlist.
+    // 1. Sigue landing/apps-script/waitlist.gs para desplegarlo.
+    // 2. Pega aquí la URL "…/exec" que te devuelve el deploy.
+    const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycby0M8hJlcJz8PmBe8zZ2x1UTt2feN7qxkGZGWoahC9rNDjYq92tTx68rp4xQMnT9683/exec';
+
+    const form   = document.getElementById('waitlistForm');
+    const okBox  = document.getElementById('formSuccess');
+    const errBox = document.getElementById('formError');
+
+    function hideMsgs() { okBox.classList.remove('show'); errBox.classList.remove('show'); }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideMsgs();
+      const email = form.email.value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        errBox.classList.add('show');
+        return;
+      }
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalLabel = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = '…';
+
+      try {
+        if (FORM_ENDPOINT.includes('YOUR_DEPLOY_ID')) {
+          console.warn('[Fix Posture] Configura FORM_ENDPOINT con tu URL de Apps Script para capturar emails reales.');
+          okBox.classList.add('show');
+          form.reset();
+          return;
+        }
+        // text/plain evita el CORS preflight de Apps Script.
+        const res = await fetch(FORM_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            email,
+            source: 'landing-validation',
+            lang: document.documentElement.lang || 'es'
+          })
+        });
+        let data = null;
+        try { data = await res.json(); } catch (_) {}
+        if (res.ok && data && data.ok) { okBox.classList.add('show'); form.reset(); }
+        else { errBox.classList.add('show'); }
+      } catch (err) {
+        errBox.classList.add('show');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalLabel;
+      }
+    });
+  </script>
+</body>
+</html>
