@@ -108,12 +108,15 @@ function doPost(e) {
 
     const sheet = getOrCreateSheet_();
 
-    // Duplicate check
+    // Duplicate check: respuesta indistinguible de un alta legítima
+    // para no permitir enumeración de emails ya inscritos.
     if (isDuplicate_(sheet, email)) {
-      return jsonOut({ ok: true, duplicate: true });
+      return jsonOut({ ok: true });
     }
 
     // Posición = número de inscritos válidos + 1 (excluye header).
+    // Estos campos solo se usan internamente (Sheet + copy del email);
+    // nunca se devuelven al cliente para no filtrar el tamaño de la lista.
     const currentCount = Math.max(sheet.getLastRow() - 1, 0);
     const position     = currentCount + 1;
     const tier         = position <= EARLY_BIRD_LIMIT ? 'early' : 'late';
@@ -134,7 +137,9 @@ function doPost(e) {
     });
 
     sheet.getRange(row, 5).setValue(true);
-    return jsonOut({ ok: true, tier: tier, position: position });
+    // Respuesta plana. `tier` y `position` solo viven server-side y en el
+    // email de bienvenida — nunca llegan al cliente ni al DevTools.
+    return jsonOut({ ok: true });
   } catch (err) {
     // Nunca devolvemos el detalle al cliente: podría filtrar implementación.
     console.error(err);
