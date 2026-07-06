@@ -4,14 +4,15 @@
  * Qué hace:
  *  1. Recibe POST con { email, source, lang, hp, dwell } desde la landing.
  *  2. Valida el email y filtra bots (honeypot + dwell time).
- *  3. Añade una fila a la hoja "Waitlist" (crea encabezado si no existe).
- *  4. Calcula la posición del inscrito:
+ *  3. Rechaza (silenciosamente) dominios desechables y ráfagas por rate limit.
+ *  4. Añade una fila a la hoja "Waitlist" (crea encabezado si no existe).
+ *  5. Calcula la posición del inscrito:
  *       - Posiciones 1–500 → tier "early" → email con 50% de descuento asegurado.
  *       - Posiciones 501+  → tier "late"  → email honesto: dentro, pero llegas
  *                                            tarde para el descuento; aviso al
  *                                            lanzamiento.
- *  5. Envía email de confirmación en ES o EN según `lang`.
- *  6. Evita reenviar si el email ya existía (idempotente).
+ *  6. Envía email de confirmación en ES o EN según `lang`.
+ *  7. Evita reenviar si el email ya existía (idempotente).
  *
  * Cómo desplegarlo:
  *  1. Crea un Google Sheet nuevo. Nómbralo "Fix Posture — Waitlist" (o lo que quieras).
@@ -41,6 +42,37 @@ const ALLOWED_SOURCES  = ['landing-v1', 'landing-validation', 'preview', 'manual
 const MIN_DWELL_MS     = 1000;   // Rechazar submits más rápidos que 1 s.
 const EARLY_BIRD_LIMIT = 500;    // Primeros N reciben el 50% de descuento.
 
+// Ventana móvil de rate limit: máximo RATE_LIMIT_MAX aceptados en cualquier
+// ventana de RATE_LIMIT_WINDOW_MS. Si se supera → fake success sin escribir
+// ni enviar email.
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;   // 1 minuto.
+const RATE_LIMIT_MAX       = 20;          // máx 20 envíos/minuto global.
+
+// Dominios de email desechables (throwaway) — se aceptan con fake success
+// para no dar señal al atacante, pero no llegan al Sheet ni reciben email.
+// Lista compacta con los más habituales; ampliable si aparece abuso real.
+const DISPOSABLE_DOMAINS = [
+  '10minutemail.com', '10minutemail.net',
+  'guerrillamail.com', 'guerrillamail.net', 'guerrillamail.org',
+  'sharklasers.com', 'grr.la',
+  'mailinator.com', 'mailinator.net',
+  'temp-mail.org', 'tempmail.com', 'tempmailo.com', 'tempmail.net',
+  'trashmail.com', 'trashmail.de', 'trashmail.net',
+  'yopmail.com', 'yopmail.fr', 'yopmail.net',
+  'dispostable.com', 'discard.email',
+  'getnada.com', 'nada.email',
+  'maildrop.cc',
+  'mohmal.com',
+  'throwawaymail.com',
+  'fakeinbox.com',
+  'spam4.me',
+  'mytemp.email',
+  'moakt.com', 'moakt.cc',
+  'burnermail.io',
+  'emailondeck.com',
+  'anonaddy.me', 'anonaddy.com'
+];
+
 function doPost(e) {
   try {
     if (!e || !e.postData || !e.postData.contents) {
@@ -62,6 +94,16 @@ function doPost(e) {
 
     if (!isValidEmail(email)) {
       return jsonOut({ ok: false, error: 'invalid_email' });
+    }
+
+    // Blocklist de dominios desechables: fake success silencioso.
+    if (isDisposableEmail_(email)) {
+      return jsonOut({ ok: true });
+    }
+
+    // Rate limit global: si en el último minuto ya hubo N envíos, fake success.
+    if (!checkRateLimit_()) {
+      return jsonOut({ ok: true });
     }
 
     const sheet = getOrCreateSheet_();
@@ -115,6 +157,46 @@ function jsonOut(obj) {
 
 function isValidEmail(s) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+}
+
+function isDisposableEmail_(email) {
+  const at = email.lastIndexOf('@');
+  if (at < 0) return false;
+  const domain = email.slice(at + 1).toLowerCase();
+  return DISPOSABLE_DOMAINS.indexOf(domain) >= 0;
+}
+
+/**
+ * Rate limit global por ventana móvil. Devuelve true si el envío puede seguir,
+ * false si hay que ignorarlo (fake success). Usa PropertiesService + LockService
+ * para evitar carreras entre peticiones concurrentes.
+ */
+function checkRateLimit_() {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(5000);
+  } catch (_) {
+    // Si no conseguimos el lock en 5s, dejamos pasar para no bloquear a usuarios legítimos.
+    return true;
+  }
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const raw   = props.getProperty('rl_timestamps') || '[]';
+    let stamps;
+    try { stamps = JSON.parse(raw); } catch (_) { stamps = []; }
+    const now = Date.now();
+    // Descarta timestamps fuera de la ventana.
+    stamps = stamps.filter(function (t) { return typeof t === 'number' && (now - t) < RATE_LIMIT_WINDOW_MS; });
+    if (stamps.length >= RATE_LIMIT_MAX) {
+      // No lo escribimos ni contamos: el atacante no aprende que hay throttling.
+      return false;
+    }
+    stamps.push(now);
+    props.setProperty('rl_timestamps', JSON.stringify(stamps));
+    return true;
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function getOrCreateSheet_() {

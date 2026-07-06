@@ -476,6 +476,14 @@
       border-color: rgba(255,255,255,0.55);
       background: rgba(255,255,255,0.13);
     }
+    .waitlist input[type="email"][aria-invalid="true"] {
+      border-color: #ff8f8f;
+      background: rgba(255, 143, 143, 0.10);
+    }
+    .waitlist input[type="email"][aria-invalid="true"]:focus {
+      border-color: #ff8f8f;
+      box-shadow: 0 0 0 3px rgba(255, 143, 143, 0.20);
+    }
     .waitlist .btn { padding: 14px 24px; min-height: 47px; }
     .waitlist-foot {
       color: rgba(255,255,255,0.55);
@@ -859,11 +867,13 @@
         <div class="waitlist-form">
           <label class="visually-hidden" for="wf-email" data-i18n="cta.emailLabel">Email</label>
           <input type="email" id="wf-email" name="email" required autocomplete="email"
-                 placeholder="tuemail@gmail.com" data-i18n-attr="placeholder" data-i18n="cta.placeholder" />
+                 placeholder="tuemail@gmail.com" data-i18n-attr="placeholder" data-i18n="cta.placeholder"
+                 aria-describedby="formError formSuccess" />
           <button type="submit" class="btn btn-light" data-i18n="cta.submit">Quiero el descuento</button>
         </div>
         <div class="form-msg ok"  id="formSuccess" role="status" data-i18n="cta.success">¡Estás dentro! Te escribiremos cuando lancemos.</div>
         <div class="form-msg err" id="formError"   role="alert"  data-i18n="cta.error">Algo falló. Inténtalo de nuevo.</div>
+        <div class="form-msg err" id="formInvalid" role="alert"  data-i18n="cta.invalidEmail">Ese email no parece válido. Revísalo.</div>
         <p class="waitlist-foot" data-i18n="cta.foot">Al apuntarte aceptas recibir 1-2 emails sobre el lanzamiento. Puedes darte de baja en cualquier momento.</p>
       </form>
     </div>
@@ -1007,6 +1017,7 @@
         'cta.submit': 'Quiero el descuento',
         'cta.success': '¡Estás dentro! Te escribiremos cuando lancemos.',
         'cta.error': 'Algo falló. Inténtalo de nuevo.',
+        'cta.invalidEmail': 'Ese email no parece válido. Revísalo.',
         'cta.foot': 'Al apuntarte aceptas recibir 1-2 emails sobre el lanzamiento. Puedes darte de baja en cualquier momento.',
         'detect.title': '¿Qué detectamos?',
         'detect.sub': 'Patrones posturales visibles. No diagnosticamos patologías para eso recomendamos a un especialista.',
@@ -1062,6 +1073,7 @@
         'cta.submit': 'I want the discount',
         'cta.success': "You're in! We'll email you when we launch.",
         'cta.error': 'Something went wrong. Please try again.',
+        'cta.invalidEmail': "That email doesn't look valid. Double-check it.",
         'cta.foot': 'By joining you agree to receive 1-2 emails about the launch. Unsubscribe anytime.',
         'detect.title': 'What we detect',
         'detect.sub': 'Visible postural patterns. We do not diagnose pathology — for that, see a specialist.',
@@ -1141,21 +1153,49 @@
     const form   = document.getElementById('waitlistForm');
     const okBox  = document.getElementById('formSuccess');
     const errBox = document.getElementById('formError');
+    const invBox = document.getElementById('formInvalid');
+    const emailInput = form.email;
     const pageLoadedAt = Date.now();
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    function hideMsgs() { okBox.classList.remove('show'); errBox.classList.remove('show'); }
+    function hideMsgs() {
+      okBox.classList.remove('show');
+      errBox.classList.remove('show');
+      invBox.classList.remove('show');
+    }
+    function markInvalid() {
+      emailInput.setAttribute('aria-invalid', 'true');
+      invBox.classList.add('show');
+    }
+    function clearInvalid() {
+      emailInput.removeAttribute('aria-invalid');
+      invBox.classList.remove('show');
+    }
+
+    // Validación en vivo: al perder foco marcamos si no es válido;
+    // al empezar a corregir limpiamos la señal.
+    emailInput.addEventListener('input', () => {
+      if (emailInput.getAttribute('aria-invalid') === 'true') clearInvalid();
+    });
+    emailInput.addEventListener('blur', () => {
+      const v = emailInput.value.trim();
+      if (v && !EMAIL_RE.test(v)) markInvalid();
+    });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       hideMsgs();
-      const email = form.email.value.trim();
+      const email = emailInput.value.trim();
       const honeypot = (form.website && form.website.value || '').trim();
       const dwell = Date.now() - pageLoadedAt;
 
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        errBox.classList.add('show');
+      if (!EMAIL_RE.test(email)) {
+        markInvalid();
+        emailInput.focus();
         return;
       }
+      clearInvalid();
+
       const submitBtn = form.querySelector('button[type="submit"]');
       const originalLabel = submitBtn.textContent;
       submitBtn.disabled = true;
@@ -1192,8 +1232,16 @@
         });
         let data = null;
         try { data = await res.json(); } catch (_) {}
-        if (res.ok && data && data.ok) { okBox.classList.add('show'); form.reset(); }
-        else { errBox.classList.add('show'); }
+
+        if (res.ok && data && data.ok) {
+          okBox.classList.add('show');
+          form.reset();
+        } else if (data && data.error === 'invalid_email') {
+          markInvalid();
+          emailInput.focus();
+        } else {
+          errBox.classList.add('show');
+        }
       } catch (err) {
         errBox.classList.add('show');
       } finally {
