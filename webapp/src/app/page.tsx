@@ -9,8 +9,16 @@ export default function Home() {
           Andamiaje listo.
         </h1>
         <p className="text-zinc-600 dark:text-zinc-400">
-          Next.js 16 + Tailwind 4 + Supabase clients preparados. Próximo paso:
-          conectar credenciales de Supabase y empezar el spike de MediaPipe.
+          Next.js 16 + Tailwind 4 + Supabase clients preparados.
+        </p>
+        <p className="text-sm text-zinc-500">
+          <a
+            href="/spike"
+            className="underline decoration-zinc-700 underline-offset-4 hover:decoration-zinc-400"
+          >
+            /spike
+          </a>{" "}
+          — validación técnica de MediaPipe (interno).
         </p>
       </div>
     </main>
